@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <chrono>
-#include <time.h>
 #include <random>
 using namespace std;
 using namespace std::chrono;
@@ -10,27 +9,27 @@ int N;
 
 void printVector(float* vector, string message="The vector is") {
     if(N < 6) {
-        cout << message << ":\n";
+        cout << message << ":" << endl;
         for(int i = 0; i < N; i++) {
-            cout << vector[i];
-            cout << "\t";
+            cout.setf(ios::showpos);
+            cout << vector[i] << endl;
         }
-        cout << "\n";
-        cout << "\n";
+        cout << endl;
     }
 }
 
 void printMatrix(float** matrix, string message="The matrix is") {
     if(N < 6) {
-        cout << message << ":\n";
+        cout << message << ":" << endl;
         for(int i = 0; i < N; i++) {
             for(int j = 0; j < N + 1; j++) {
-                cout << matrix[i][j];
-                cout << "\t";
+                cout.setf(ios::showpos);
+                cout.precision(5);
+                cout << matrix[i][j] << "    ";
             }
-            cout << "\n";
+            cout << endl;
         }
-        cout << "\n";
+        cout << endl;
     }
 }
 
@@ -79,7 +78,7 @@ void ForwardEliminate(float** mat)
             mat[j][i] = 0;
         }
     }
-    cout << "Time for Partial Pivoting: " << pivoting_time << "ms\n";
+    cout << "Time for Partial Pivoting: " << pivoting_time << "ms" << endl;
 }
 
 float* BackSubsitute(float** mat) {
@@ -99,19 +98,19 @@ float* GaussianElimination(float** matrix) {
     ForwardEliminate(matrix);
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(end  - start);
-    cout << "Time for Forward Elimination: " << duration.count() << "ms\n";
+    cout << "Time for Forward Elimination: " << duration.count() << "ms" << endl;
 
     start = high_resolution_clock::now();
 	float* x = BackSubsitute(matrix);
     end = high_resolution_clock::now();
     duration = duration_cast<milliseconds>(end - start);
-    cout << "Time for Backward Substitution: " << duration.count() << "ms\n";
-    cout << "\n";
+    cout << "Time for Backward Substitution: " << duration.count() << "ms" << endl;
+    cout << endl;
     return x;
 }
 
 int main(int argc, char** argv) {
-    cout << "\n";
+    cout << endl;
     N = atoi(argv[1]);
 
     float** augmentedMatrix = new float*[N];
