@@ -1,4 +1,21 @@
+/*
+Q1) Write code to implement the Gaussian elimination with partial pivot-
+ing for the system An.n x = b. Include a statement in the code to indicate
+the swapping of rows. Using the code,
+
+a) draw the log-log plot of n versus the time taken for forward elimina-
+tion and backward substitution (as separate graphs) by taking values
+of n between 1000 and 10000 in steps of 1000. Determine the time
+taken for a single computation in your machine (by averaging over
+1000 runs) and compare the time taken with the actual time derived
+in the class. This should give the time taken for the partial pivoting.
+
+b) solve the system A5.5 x = b, with random entries and display your
+results.
+*/
+
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <chrono>
 #include <random>
@@ -28,7 +45,6 @@ class Assignment1Q1 {
                 }
                 cout << endl;
             }
-            cout << endl;
         }
     }
 
@@ -42,75 +58,77 @@ class Assignment1Q1 {
         }
     }
 
-    void ForwardEliminate(float** mat)
+    void ForwardEliminate(float** matrix)
     {
-        float pivoting_time = 0;
         for (int i = 0; i < N; i++)
         {
-            auto start = high_resolution_clock::now();
-            
+            // Pivot rows with rows having maximum pivot element
             int max_index = i;
-            int max_value = mat[max_index][i];
-            /* Find greater pivot value */
+            int max_value = matrix[max_index][i];
+            
             for (int j = i + 1; j < N; j++) {  
-                if (abs(mat[j][i]) > max_value) {   
+                if (abs(matrix[j][i]) > max_value) {   
                     max_index = j;
-                    max_value = mat[max_index][i];
+                    max_value = matrix[max_index][i];
                 }
             }
     
             if (max_index != i) {
-                Pivot(mat, i, max_index);
+                Pivot(matrix, i, max_index);
             }
-            
-            auto end = high_resolution_clock::now();
-            auto duration = duration_cast<milliseconds>(end - start);
-            pivoting_time += duration.count();
 
-
+            // Eliminate elements below pivot to 0
             for (int j = i + 1; j < N; j++)
             {
-                float f = mat[j][i] / mat[i][i];
+                float f = matrix[j][i] / matrix[i][i];
                 for (int k = i + 1; k <= N; k++) {
-                    mat[j][k] -= mat[i][k] * f;
+                    matrix[j][k] -= matrix[i][k] * f;
                 }
-                mat[j][i] = 0;
+                matrix[j][i] = 0;
             }
         }
-        cout << "Time for Partial Pivoting: " << pivoting_time << "ms" << endl;
     }
 
-    float* BackSubsitute(float** mat) {
+    float* BackSubsitute(float** matrix) {
         float* x = new float[N];
         for (int i = N - 1; i >= 0; i--) {
-            x[i] = mat[i][N];
+            x[i] = matrix[i][N];
             for (int j = i + 1; j < N; j++) {
-                x[i] -= mat[i][j] * x[j];
+                x[i] -= matrix[i][j] * x[j];
             }
-            x[i] = x[i] / mat[i][i];
+            x[i] = x[i] / matrix[i][i];
         }
         return x;
     }
 
     float* GaussianElimination(float** matrix) {
+        // Do Forward Elimination
         auto start = high_resolution_clock::now();
         ForwardEliminate(matrix);
         auto end = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(end  - start);
+        
+        ofstream myfile;
+        myfile.open("forwardElimination.txt", ios_base::app);
+        myfile << N << " " << duration.count() << endl;
+        myfile.close();
         cout << "Time for Forward Elimination: " << duration.count() << "ms" << endl;
 
+        // Do Back Substitution
         start = high_resolution_clock::now();
         float* x = BackSubsitute(matrix);
         end = high_resolution_clock::now();
         duration = duration_cast<milliseconds>(end - start);
+
+        myfile.open("backSubstitution.txt", ios_base::app);
+        myfile << N << " " << duration.count()  << endl;
+        myfile.close();
         cout << "Time for Backward Substitution: " << duration.count() << "ms" << endl;
-        cout << endl;
         return x;
     }
 };
 
 int main(int argc, char** argv) {
-    cout << endl;
     Assignment1Q1 obj;
     obj.N = atoi(argv[1]);
     float** augmentedMatrix = new float*[obj.N];
@@ -118,6 +136,7 @@ int main(int argc, char** argv) {
         augmentedMatrix[i] = new float[obj.N + 1];
     }
 
+    // Generate a random N x N+1 matrix
     default_random_engine eng{static_cast<long unsigned int>(time(0))};
     uniform_real_distribution<float> urd(-9, 9);
     for (int i = 0; i < obj.N; i++) {

@@ -1,3 +1,14 @@
+/*
+Q2) Gauss Jordan method To nd the inverse of a non-singular matrix
+A by Gauss Jordan method, one starts with the augmented matrix [A j I]
+where I is the identity matrix of the same size and performs elementary row
+operations on A so that A is reduced to I. Performing the same elemen-
+tary operations on I would give A􀀀1. Assuming that Amm is an invertible
+matrix, write a code to nd the inverse of A using the Gauss Jordan method.
+Using the code, nd the inverse of a 6 x 6 random matrix which is non-
+singular.
+*/
+
 #include <iostream>
 #include <string>
 #include <random>
