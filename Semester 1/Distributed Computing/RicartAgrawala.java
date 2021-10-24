@@ -73,24 +73,33 @@ public class RicartAgrawala extends Thread {
           waitingList.add(p);
         sendtoRi(String.valueOf(ti));
 
-        System.out.println("Asking Processes... ");
+        System.out.println("Broadcasting REQUEST to other processes... ");
         while (true) {
           sleep(1000);
           if (!accessing && waitingList.size() == 0) {
+            System.out.println("Received all REPLIES from other processes... ");
             synchronized (lockFile) {
               try {
                 FileOutputStream fos = new FileOutputStream(lockFile);
                 FileLock lock = fos.getChannel().lock();
                 accessing = true;
-                System.out.println("Accessing Critical Section.");
-                sleep(5000);
+                System.out.println("Executing Critical Section");
+                sleep(1000);
+                System.out.println(".");
+                sleep(1000);
+                System.out.println(".");
+                sleep(1000);
+                System.out.println(".");
+                sleep(1000);
+                System.out.println(".");
+                sleep(1000);
+                System.out.println(".");
                 System.out.println("Releasing Critical Section.");
                 replyToDeferred();
                 requestDeferredArray.clear();
                 waiting = false;
                 accessing = false;
                 fos.close();
-                // break;
               } catch (Exception e) {
                 e.printStackTrace();
               }
@@ -114,7 +123,7 @@ public class RicartAgrawala extends Thread {
         int id = Integer.parseInt(input.readLine());
         p = new ProcessClient(s, id);
         processesToRequest.add(p);
-        System.out.println("P" + id + " is Successfully Connected.");
+        System.out.println("Successfully Connected to P" + id);
         sleep(500);
         p.start();
       }
@@ -150,7 +159,7 @@ public class RicartAgrawala extends Thread {
       try {
         output = new PrintWriter(client.getOutputStream(), true);
         input = new BufferedReader(new InputStreamReader(client.getInputStream()));
-      } catch (IOException e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }
@@ -170,26 +179,34 @@ public class RicartAgrawala extends Thread {
           // System.out.println("Message Received : " + msg);
           String msgs[] = msg.split(":");
           int rId = Integer.parseInt(msgs[0]);
+          
+          // If process gets a REPLY
           if (msgs[1].equals("OK")) {
             System.out.println("Reply Received From P" + msg);
             for (ProcessClient p : processesToRequest)
               if (p.getPID() == rId)
                 waitingList.remove(p);
-          } else {
+          } 
+          // If process gets a REQUEST
+          else {
             System.out.println("Request Received From P" + msg);
             int rHi = Integer.valueOf(msgs[1]);
             
-            if (accessing || (waiting && ti > rHi)) {
+            // If process is accessing or is waiting for CS and the clock time is 
+            // less than the clock time of request message defer the REQUEST
+            if (accessing || (waiting && ti < rHi)) {
               for (ProcessClient p : processesToRequest)
                 if (p.getPID() == rId)
                   requestDeferredArray.add(p);
-            } else {
+            } 
+            // Else send a REPLY to REQUEST
+            else {
               if (ti < rHi)
                 ti = rHi;
               sendTo(rId, "OK");
             }
           }
-        } catch (IOException e) {
+        } catch (Exception e) {
           for (ProcessClient p : processesToRequest)
             if (p.getPID() == id)
               processesToRequest.remove(p);
