@@ -1,22 +1,20 @@
 import java.io.*;
 import java.net.*;
-import java.nio.channels.FileLock;
 import java.util.*;
 
 public class RicartAgrawala extends Thread {
-  int ID;
-  String host;
-  int port;
-  int[] ports;
-  boolean waiting = false;
-  boolean accessing = false;
-  private int ti = 0;
-  List<ProcessClient> requestDeferredArray = new ArrayList<ProcessClient>();
-  List<ProcessClient> waitingList = new ArrayList<ProcessClient>();
-  List<ProcessClient> processesToRequest = new ArrayList<ProcessClient>();
-  
+  int ID; // Process ID
+  String host; // Process Host
+  int port; // Process Port
+  int[] ports; // Array of Ports of participating Processes
+  boolean waiting = false; // Flag to check if process has requested and yet to receive CS
+  boolean accessing = false; // Flag to check if process is executing CS
+  private int ti = 0; // Process Local Clock
+  List<ProcessServer> requestDeferredArray = new ArrayList<ProcessServer>(); // Request Deffered Array
+  List<ProcessServer> waitingList = new ArrayList<ProcessServer>(); // Array of process to get REPLIES from
+  List<ProcessServer> processesToRequest = new ArrayList<ProcessServer>(); // The collection processes to broadcast REQUESTS
+
   Properties prop = new Properties();
-  private static final File lockFile = new File("lock.file");
 
   public static void main(String[] args) {
     int ID = Integer.parseInt(args[0]);
@@ -47,63 +45,65 @@ public class RicartAgrawala extends Thread {
   public void run() {
     PrintWriter pw;
     try {
-      sleep(5000);
+      sleep(2000);
     } catch (Exception e) {
       e.printStackTrace();
     }
     for (int port : ports) {
-      try {
+      // try {
         if (port != this.port) {
-          Socket s = new Socket(host, port);
-          ProcessClient p = new ProcessClient(s, port);
-          pw = new PrintWriter(s.getOutputStream(), true);
-          pw.println(this.ID);
-          p.start();
+          boolean reconnect = true;
+          while(reconnect) {
+            try {
+              sleep(2000);
+              Socket s = new Socket(host, port);
+              ProcessServer p = new ProcessServer(s, port);
+              pw = new PrintWriter(s.getOutputStream(), true);
+              pw.println(this.ID);
+              p.start();
+              reconnect = false;
+            } catch (Exception e) {
+              System.out.println("Error Connecting to processes with port " + port);
+            }
+          }
         }
-      } catch (Exception e) {
-        System.out.println("Error Connecting with Other processes");
-      }
+      // } catch (Exception e) {
+      //   System.out.println("Error Connecting with Other processes");
+      // }
     }
+    System.out.println("\n\nAll processes successfully connected, ready to start.");
     while (true) {
       try {
         System.in.read();
         ti++;
         waiting = true;
-        for (ProcessClient p : processesToRequest)
+        for (ProcessServer p : processesToRequest)
           waitingList.add(p);
-        sendtoRi(String.valueOf(ti));
 
         System.out.println("Broadcasting REQUEST to other processes... ");
+        sendtoRi(String.valueOf(ti));
+
         while (true) {
           sleep(1000);
-          if (!accessing && waitingList.size() == 0) {
+          if (waitingList.size() == 0) {
             System.out.println("Received all REPLIES from other processes... ");
-            synchronized (lockFile) {
-              try {
-                FileOutputStream fos = new FileOutputStream(lockFile);
-                FileLock lock = fos.getChannel().lock();
-                accessing = true;
-                System.out.println("Executing Critical Section");
-                sleep(1000);
-                System.out.println(".");
-                sleep(1000);
-                System.out.println(".");
-                sleep(1000);
-                System.out.println(".");
-                sleep(1000);
-                System.out.println(".");
-                sleep(1000);
-                System.out.println(".");
-                System.out.println("Releasing Critical Section.");
-                replyToDeferred();
-                requestDeferredArray.clear();
-                waiting = false;
-                accessing = false;
-                fos.close();
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-            }
+            accessing = true;
+            System.out.println("Executing Critical Section");
+            sleep(1000);
+            System.out.println(".");
+            sleep(1000);
+            System.out.println(".");
+            sleep(1000);
+            System.out.println(".");
+            sleep(1000);
+            System.out.println(".");
+            sleep(1000);
+            System.out.println(".");
+            System.out.println("Releasing Critical Section.");
+            replyToDeferred();
+            requestDeferredArray.clear();
+            waiting = false;
+            accessing = false;
             break;
           }
         }
@@ -113,15 +113,16 @@ public class RicartAgrawala extends Thread {
 
   }
 
+  
   public void createServer() {
     try {
       ServerSocket server = new ServerSocket(port);
-      ProcessClient p;
+      ProcessServer p;
       while (true) {
         Socket s = server.accept();
         BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
         int id = Integer.parseInt(input.readLine());
-        p = new ProcessClient(s, id);
+        p = new ProcessServer(s, id);
         processesToRequest.add(p);
         System.out.println("Successfully Connected to P" + id);
         sleep(500);
@@ -133,28 +134,28 @@ public class RicartAgrawala extends Thread {
   }
 
   public void sendtoRi(String message) {
-    for (ProcessClient p : processesToRequest)
+    for (ProcessServer p : processesToRequest)
       p.sendMessage(ID + ":" + message);
   }
 
   public void sendTo(int x, String message) {
-    for (ProcessClient p : processesToRequest)
+    for (ProcessServer p : processesToRequest)
       if (p.getPID() == x)
         p.sendMessage(ID + ":" + message);
   }
 
   public void replyToDeferred() {
-    for (ProcessClient p : requestDeferredArray)
+    for (ProcessServer p : requestDeferredArray)
       p.sendMessage(ID + ":OK");
   }
 
-  class ProcessClient extends Thread {
+  class ProcessServer extends Thread {
     BufferedReader input;
     PrintWriter output;
     String msg;
     int id;
 
-    public ProcessClient(Socket client, int id) {
+    public ProcessServer(Socket client, int id) {
       this.id = id;
       try {
         output = new PrintWriter(client.getOutputStream(), true);
@@ -176,44 +177,48 @@ public class RicartAgrawala extends Thread {
       while (true) {
         try {
           String msg = input.readLine();
-          // System.out.println("Message Received : " + msg);
           String msgs[] = msg.split(":");
           int rId = Integer.parseInt(msgs[0]);
-          
+
           // If process gets a REPLY
           if (msgs[1].equals("OK")) {
             System.out.println("Reply Received From P" + msg);
-            for (ProcessClient p : processesToRequest)
+            for (ProcessServer p : processesToRequest)
               if (p.getPID() == rId)
                 waitingList.remove(p);
-          } 
+          }
           // If process gets a REQUEST
           else {
-            System.out.println("Request Received From P" + msg);
             int rHi = Integer.valueOf(msgs[1]);
             
-            // If process is accessing or is waiting for CS and the clock time is 
-            // less than the clock time of request message defer the REQUEST
-            if (accessing || (waiting && ti < rHi)) {
-              for (ProcessClient p : processesToRequest)
+            // Send REPLY when process is not accessing, waiting for CS or if process is waiting 
+            // and has a local time stamp higher than request time stamp or if the timestamps are 
+            // same send reply if the request id is lesser (since smaller id has higher proirity)
+            // Else deffer the REQUEST
+            if (!accessing) {
+              if ((!waiting) || (waiting && (ti > rHi)) || (waiting && (ti == rHi && getPID() > rId))) {
+                ti = Math.max(ti, rHi);
+                sendTo(rId, "OK");
+              } else {
+                ti++;
+                System.out.println("Request from P" + rId + " deferred.");
+                for (ProcessServer p : processesToRequest)
+                  if (p.getPID() == rId)
+                    requestDeferredArray.add(p);
+              }
+            }
+            else {
+              ti++;
+              System.out.println("Request from P" + rId + " deferred.");
+              for (ProcessServer p : processesToRequest)
                 if (p.getPID() == rId)
                   requestDeferredArray.add(p);
-            } 
-            // Else send a REPLY to REQUEST
-            else {
-              if (ti < rHi)
-                ti = rHi;
-              sendTo(rId, "OK");
             }
           }
         } catch (Exception e) {
-          for (ProcessClient p : processesToRequest)
-            if (p.getPID() == id)
-              processesToRequest.remove(p);
-          System.out.println(id + "Error! Socket will be closed immediatly");
-          break;
+          e.printStackTrace();
+          System.exit(0);
         }
-
       }
     }
 
