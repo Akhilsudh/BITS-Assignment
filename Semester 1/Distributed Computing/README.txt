@@ -13,9 +13,9 @@ NOTE: This code can be found in my Github Repository here https://github.com/Akh
 
 Prereqs:
 ========
-1. Any Operating System that supports a Java Compiler (This code is tested completely on Ubuntu 20.04)
-2. Java compiler (This code tested on openjdk 11)
-3. Terminal emulators (Preferably ones where more than one tab session can be opened up at the same time) to see the processes in action
+1. Any Operating System that supports a JDK (This code is tested completely on Ubuntu 20.04)
+2. JDK for compiling and run the code (This code tested on openjdk 11)
+3. Terminal emulators (Preferably ones where more than one tab session can be opened up at the same time) to see each process in action
 
 Assumptions Made:
 =================
