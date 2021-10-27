@@ -8,13 +8,14 @@
 | Ricart Agrawala Algorithm For Mutual Exclusion |
 | By Akhil Sudhakaran - 2021MT12054              |
 --------------------------------------------------
-Note: For a more prettier README, click here https://gist.github.com/Akhilsudh/3cc3db7e6276b7d90eaff436ddbb9b57
+NOTE: For a more prettier README, click here https://gist.github.com/Akhilsudh/3cc3db7e6276b7d90eaff436ddbb9b57
+NOTE: This code can be found in my Github Repository here https://github.com/Akhilsudh/BITS-Assignment/tree/master/Semester%201/Distributed%20Computing
 
 Prereqs:
 ========
 1. Any Operating System that supports a Java Compiler (This code is tested completely on Ubuntu 20.04)
-2. Java compiler
-3. Terminal emulators (Preferable ones where more than one tab session can be opened up at the same time) to see the processes in action
+2. Java compiler (This code tested on openjdk 11)
+3. Terminal emulators (Preferably ones where more than one tab session can be opened up at the same time) to see the processes in action
 
 Assumptions Made:
 =================
@@ -43,19 +44,19 @@ javac RicartAgrawala.java
 3. Run this program in separate terminal sessions (to simulate each process), for example:
     * In Terminal 1
     ```
-    java RicartAgrawala 1
+    java -cp . RicartAgrawala 1
 
     ```
 
     * In Terminal 2
     ```
-    java RicartAgrawala 2
+    java -cp . RicartAgrawala 2
 
     ```
 
     * In Terminal 3
     ```
-    java RicartAgrawala 3
+    java -cp . RicartAgrawala 3
 
     ```
 

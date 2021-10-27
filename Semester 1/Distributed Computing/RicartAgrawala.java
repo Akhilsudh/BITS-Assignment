@@ -67,14 +67,14 @@ public class RicartAgrawala extends Thread {
             }
           }
         }
-      // } catch (Exception e) {
-      //   System.out.println("Error Connecting with Other processes");
-      // }
     }
-    System.out.println("\n\nAll processes successfully connected, ready to start.");
+    System.out.println("\n=====================================================");
+    System.out.println("All processes successfully connected, ready to start.");
+    System.out.println("=====================================================\n");
     while (true) {
       try {
-        System.in.read();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        br.readLine();
         ti++;
         waiting = true;
         for (ProcessServer p : processesToRequest)
