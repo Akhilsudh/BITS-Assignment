@@ -26,7 +26,7 @@ Assumptions Made:
 
 Instructions To Run The Program:
 ================================
-1. Before we begin executing the program, we need to set number of processes/nodes participating in the algorithm, the host and port of the processes/nodes in the `process.config` file (An example is shown below):
+1. Before we begin executing the program, we need to set number of processes/nodes participating in the algorithm, the host and port of the processes/nodes in the `process.config` file (An example for 3 processes is shown below):
 ```
 process.count=3
 process.1=127.0.0.1:3001
