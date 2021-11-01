@@ -1,8 +1,17 @@
-# Ricart Agrawala Algorithm For Mutual Exclusion
+```
+██████  ███████  █████  ██████  ███    ███ ███████ 
+██   ██ ██      ██   ██ ██   ██ ████  ████ ██      
+██████  █████   ███████ ██   ██ ██ ████ ██ █████   
+██   ██ ██      ██   ██ ██   ██ ██  ██  ██ ██      
+██   ██ ███████ ██   ██ ██████  ██      ██ ███████ 
 
-#### Submission by Akhil Sudhakaran - 2021MT12054
+--------------------------------------------------
+| Ricart Agrawala Algorithm For Mutual Exclusion |
+| By Akhil Sudhakaran - 2021MT12054              |
+--------------------------------------------------
+```
+
 - Implementation done as part of Assignment for **Distributed Computing Course SSZG526** at **BITS Pilani**
-
 - Code can be found in this [Github Repo](https://github.com/Akhilsudh/BITS-Assignment/tree/master/Semester%201/Distributed%20Computing)
 - A walkthrough video of the entire code execution is shown [here](https://youtu.be/KHTUzgayibg) :
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/KHTUzgayibg/0.jpg)](https://youtu.be/KHTUzgayibg)
