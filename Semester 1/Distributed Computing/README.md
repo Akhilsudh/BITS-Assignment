@@ -14,7 +14,8 @@
 - Implementation done as part of Assignment for **Distributed Computing Course SSZG526** at **BITS Pilani**
 - Code can be found in this [Github Repo](https://github.com/Akhilsudh/BITS-Assignment/tree/master/Semester%201/Distributed%20Computing)
 - A walkthrough video of the entire code execution is shown [here](https://youtu.be/KHTUzgayibg) :
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/KHTUzgayibg/0.jpg)](https://youtu.be/KHTUzgayibg)
+
+  [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/KHTUzgayibg/0.jpg)](https://youtu.be/KHTUzgayibg)
 
 ### Prereqs:
 1. Any Operating System that supports a Java Compiler (This code is tested completely on Ubuntu 20.04)
