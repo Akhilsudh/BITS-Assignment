@@ -8,6 +8,7 @@
 | Ricart Agrawala Algorithm For Mutual Exclusion |
 | By Akhil Sudhakaran - 2021MT12054              |
 --------------------------------------------------
+NOTE: A walkthrough video of the entire code execution is shown here https://youtu.be/KHTUzgayibg
 NOTE: For a more prettier README, click here https://gist.github.com/Akhilsudh/3cc3db7e6276b7d90eaff436ddbb9b57
 NOTE: This code can be found in my Github Repository here https://github.com/Akhilsudh/BITS-Assignment/tree/master/Semester%201/Distributed%20Computing
 
