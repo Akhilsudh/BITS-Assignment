@@ -1,4 +1,4 @@
-# Assignment #1 (10% weight, 5% for Submission 5% for Discussion)
+# Assignment #2 (10% weight, 5% for Submission 5% for Discussion)
 
 ## Objective: To gain experience in architecting real-life applications in domains such as Retail, Transportation, Healthcare, Hospitality, etc. Example systems: Swiggy, Uber, an IoT system to monitor the health of industrial air conditioners.
 
