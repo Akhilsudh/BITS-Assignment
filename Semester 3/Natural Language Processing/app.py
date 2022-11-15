@@ -14,6 +14,7 @@ These endpoints give a list of news articles when given details such as educatio
 
 #### Get Details -> tf-idf -> keywords -> Google News RSS -> User result
 
+**This code can be found in [this](https://github.com/Akhilsudh/BITS-Assignment/tree/master/Semester%203/Natural%20Language%20Processing) Github repo.**
 """
 
 tags_metadata = [
@@ -55,26 +56,32 @@ def scrapeNews(keywords):
 @app.get('/assignment', tags=["Assignment end point"])
 def assignment(Education, Experience, Skills):
     """
-     ### This end point returns relevent news based on the details provided as the API parameters
+     ### This end point returns relevent news based on the details provided as the API parameters by using a custom TFIDF implementation for getting keywords.
      #### The parameters are:
-     - **Education:** Provide education details such as degree and university name.
-     - **Experience:** Provide job experience description along with details such as company worked for and the position held.
-     - **Skills:** Provide a list of professional skills.
+     - **Education:** Provide education details such as degree and university name. (Eg: "BE Computer science, IIT Chennai")
+     - **Experience:** Provide job experience description along with details such as company worked for and the position held. (Eg: "Full stack engineer, experience in building scalabale cloud applications in java. Software designer 2, Microsoft")
+     - **Skills:** Provide a list of professional skills. (Eg: "Java, python, cloud, fullstack, angular")
     """
     obj = tfidf()
     keywords = obj.extractKeywords(Education, Experience, Skills, 10)
     return scrapeNews(keywords)
-    # return {'result': scrapeNews(keywords)}
 
-@app.get('/', tags=["Test end points"])
+@app.get('/', tags=["Test end points"], include_in_schema=False)
 def index():
-    return {'result': 'API server is working'}
+    return "End points can be accessed here http://127.0.0.1:8000/docs"
 
 @app.get('/testSKlearn', tags=["Test end points"])
-def test_sklearn(deg, qual, skills):
+def test_sklearn(Education, Experience, Skills):
+    """
+     ### This end point returns relevent news based on the details provided as the API parameters, but this uses SKlearn's TFIDF implementation to do so
+     #### The parameters are:
+     - **Education:** Provide education details such as degree and university name. (Eg: "BE Computer science, IIT Chennai")
+     - **Experience:** Provide job experience description along with details such as company worked for and the position held. (Eg: "Full stack engineer, experience in building scalabale cloud applications in java. Software designer 2, Microsoft")
+     - **Skills:** Provide a list of professional skills. (Eg: "Java, python, cloud, fullstack, angular")
+    """
     obj = tfidf()
-    keywords = obj.skLearnTest(deg, qual, skills, 10)
-    return {'result': scrapeNews(keywords)}
+    keywords = obj.skLearnTest(Education, Experience, Skills, 10)
+    return scrapeNews(keywords)
 
 @app.get('/testGoogleRSS', tags=["Test end points"])
 def testGoogleRSS():
