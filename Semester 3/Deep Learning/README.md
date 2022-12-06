@@ -1,4 +1,4 @@
-# Profession News Recommender App
+# Micro facial emotion recognition
 ## This DL assignment submission is by Akhil S - 2021MT12054
 
 ### Dataset
