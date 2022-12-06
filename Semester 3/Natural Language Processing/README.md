@@ -2,6 +2,16 @@
 
 ## This NLP assignment submission is by Akhil S - 2021MT12054
 
+Assignment:
+===========
+Proposed solution will recommend real time news based on user professional profile.
+Steps:
+1. Enter your Educational details(Degree, University)
+2. Enter your most recent experience(Organization Name, Experience description)
+3. Enter your skills
+4. Implement a content based recommendation system which will recommend news based on above entered data in real time. [6 marks]
+5. Convert the solution in FastAPI endpoint.[4 marks]
+
 Prerequisites:
 ==============
 1. Make sure that the requirements mentioned in requirements.txt is installed, this can be done by running the following:
@@ -24,11 +34,8 @@ Running the app:
 
 
 2. Go to http://127.0.0.1:8000/docs, the end point for the assignment is "/assignment".
-
 3. You can try this api out by clicking "Try it out" button
-
 4. Provide the Education, Experience and Skills and hit execute
-
 5. This API will return a list of objects where each object has the Title, PublishedDate and URL for the news article
 
 Screenshots and samples:
